@@ -1,0 +1,461 @@
+###### @@@@@@@@@@@@@@@Selection-Sort
+
+#include <stdio.h>
+
+// Function to swap two elements in an array
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Function to perform selection sort
+void selectionSort(int arr[], int n) {
+    int i, j, min_idx;
+
+    // Iterate through the array
+    for (i = 0; i < n - 1; i++) {
+        min_idx = i; // Assume the current index has the minimum value
+
+        // Find the index of the minimum element in the unsorted part of the array
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+
+        // Swap the minimum element with the first element of the unsorted part
+        swap(&arr[min_idx], &arr[i]);
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    selectionSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+###### @@@@@@@@@@@@@Insertion Sort
+
+#include <stdio.h>
+
+// Function to perform insertion sort
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i]; // Store the current element to be inserted
+        j = i - 1;
+
+        // Move elements of arr[0..i-1], that are greater than key, to one position ahead of their current position
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key; // Insert the key at its correct position
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    insertionSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+####### @@@@@@@@@@@@ Merge Sort
+
+#include <stdio.h>
+
+// Function to merge two sorted subarrays arr[l..m] and arr[m+1..r]
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1; // Size of the left subarray
+    int n2 = r - m; // Size of the right subarray
+
+    // Create temporary arrays to store the left and right subarrays
+    int L[n1], R[n2];
+
+    // Copy data to temporary arrays L[] and R[]
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    // Merge the temporary arrays back into arr[l..r]
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy the remaining elements of L[], if any
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy the remaining elements of R[], if any
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+// Function to implement merge sort
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2; // Calculate the middle index
+
+        // Recursively sort the left and right halves
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+
+        // Merge the sorted halves
+        merge(arr, l, m, r);
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Given array is \n");
+    printArray(arr, arr_size);
+
+    mergeSort(arr, 0, arr_size - 1);
+
+    printf("\nSorted array is \n");
+    printArray(arr, arr_size);
+    return 0;
+}
+
+
+##########@@@@@@@@@@ - Quick Sort
+
+#include <stdio.h>
+
+// Function to swap two elements in an array
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Function to partition the array and return the pivot index
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high]; // Choose the last element as the pivot
+    int i = low - 1; // Index of smaller element
+
+    for (int j = low; j <= high - 1; j++) {
+        // If current element is smaller than or equal to the pivot
+        if (arr[j] <= pivot) {
+            i++; // Increment index of smaller element
+            swap(&arr[i], &arr[j]); // Swap current element with arr[i]
+        }
+    }
+    swap(&arr[i + 1], &arr[high]); // Swap pivot with arr[i+1]
+    return (i + 1); // Return the partitioning index
+}
+
+// Function to implement Quick Sort
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        // Partition the array
+        int pi = partition(arr, low, high);
+
+        // Recursively sort elements before and after partition
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {10, 7, 8, 9, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    quickSort(arr, 0, n - 1);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+##########@@@@@@@@@@@@ Finding the minimum and maximum element 
+
+#include <stdio.h>
+
+// Function to find the minimum element in an array
+int findMin(int arr[], int n) {
+    int min = arr[0]; // Assume the first element is the minimum
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < min) {
+            min = arr[i]; // Update min if current element is smaller
+        }
+    }
+    return min;
+}
+
+// Function to find the maximum element in an array
+int findMax(int arr[], int n) {
+    int max = arr[0]; // Assume the first element is the maximum
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i]; // Update max if current element is greater
+        }
+    }
+    return max;
+}
+
+int main() {
+    int arr[] = {3, 7, 2, 1, 9, 4, 6, 8, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    // Finding minimum and maximum elements
+    int min = findMin(arr, n);
+    int max = findMax(arr, n);
+
+    printf("Minimum element in the array: %d\n", min);
+    printf("Maximum element in the array: %d\n", max);
+
+    return 0;
+}
+
+###########@@@@@@@@@@ fractional knapsack problem
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent an item
+struct Item {
+    int value; // Value of the item
+    int weight; // Weight of the item
+};
+
+// Function to compare items based on their value-to-weight ratio
+int compare(const void *a, const void *b) {
+    double ratio_a = (double)(((struct Item *)a)->value) / (((struct Item *)a)->weight);
+    double ratio_b = (double)(((struct Item *)b)->value) / (((struct Item *)b)->weight);
+    return (ratio_b > ratio_a) - (ratio_b < ratio_a);
+}
+
+// Function to solve the fractional knapsack problem
+double fractionalKnapsack(int W, struct Item arr[], int n) {
+    // Sort items based on their value-to-weight ratio
+    qsort(arr, n, sizeof(arr[0]), compare);
+
+    double totalValue = 0.0; // Total value of items in the knapsack
+    int currentWeight = 0; // Current weight in the knapsack
+
+    // Iterate through sorted items
+    for (int i = 0; i < n; i++) {
+        // If adding the entire item would not exceed the capacity, add it fully
+        if (currentWeight + arr[i].weight <= W) {
+            totalValue += arr[i].value;
+            currentWeight += arr[i].weight;
+        } else {
+            // Otherwise, add a fraction of the item to fill the knapsack to its capacity
+            int remainingWeight = W - currentWeight;
+            totalValue += (double)(arr[i].value * remainingWeight) / arr[i].weight;
+            break; // Knapsack is full, no need to continue
+        }
+    }
+    return totalValue;
+}
+
+int main() {
+    struct Item arr[] = {{60, 10}, {100, 20}, {120, 30}}; // Array of items (value, weight)
+    int n = sizeof(arr) / sizeof(arr[0]); // Number of items
+    int W = 50; // Maximum weight capacity of the knapsack
+
+    double maxValue = fractionalKnapsack(W, arr, n); // Solve the fractional knapsack problem
+
+    printf("Maximum value that can be obtained: %.2f\n", maxValue); // Print the result
+
+    return 0;
+}
+
+
+##########@@@@@@@@@ All pair shortest path 
+
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4 // Number of vertices in the graph
+#define INF INT_MAX // Infinity value for unreachable vertices
+
+// Function to print the solution matrix
+void printSolution(int dist[][V]) {
+    printf("Shortest distances between every pair of vertices:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            if (dist[i][j] == INF)
+                printf("INF\t");
+            else
+                printf("%d\t", dist[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Function to solve the APSP problem using Floyd-Warshall algorithm
+void floydWarshall(int graph[][V]) {
+    int dist[V][V]; // Solution matrix
+
+    // Initialize the solution matrix with the given graph
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            dist[i][j] = graph[i][j];
+
+    // Update the solution matrix by considering all vertices as intermediate vertices
+    for (int k = 0; k < V; k++) {
+        // Pick all vertices as source one by one
+        for (int i = 0; i < V; i++) {
+            // Pick all vertices as destination for the above picked source
+            for (int j = 0; j < V; j++) {
+                // If vertex k is on the shortest path from i to j, then update the value of dist[i][j]
+                if (dist[i][k] != INF && dist[k][j] != INF && dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    }
+
+    // Print the solution matrix
+    printSolution(dist);
+}
+
+int main() {
+    int graph[V][V] = {{0, 5, INF, 10},
+                       {INF, 0, 3, INF},
+                       {INF, INF, 0, 1},
+                       {INF, INF, INF, 0}};
+
+    // Solve the APSP problem using Floyd-Warshall algorithm
+    floydWarshall(graph);
+
+    return 0;
+}
+
+
+############@@@@@@@@@@ Longest common subsequence 
+
+#include <stdio.h>
+#include <string.h>
+
+// Function to find the length of the LCS
+int lcsLength(char *X, char *Y, int m, int n) {
+    int L[m + 1][n + 1];
+
+    // Build the L[m+1][n+1] table in bottom-up manner
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 || j == 0)
+                L[i][j] = 0;
+            else if (X[i - 1] == Y[j - 1])
+                L[i][j] = L[i - 1][j - 1] + 1;
+            else
+                L[i][j] = (L[i - 1][j] > L[i][j - 1]) ? L[i - 1][j] : L[i][j - 1];
+        }
+    }
+    return L[m][n];
+}
+
+// Function to print the LCS
+void printLCS(char *X, char *Y, int m, int n) {
+    int L[m + 1][n + 1];
+    int index = lcsLength(X, Y, m, n);
+    char lcs[index + 1];
+    lcs[index] = '\0'; // Set the last character as NULL
+
+    // Build lcs[] in bottom up fashion
+    int i = m, j = n;
+    while (i > 0 && j > 0) {
+        if (X[i - 1] == Y[j - 1]) {
+            lcs[index - 1] = X[i - 1]; // Put current character in result
+            i--;
+            j--;
+            index--;
+        } else if (L[i - 1][j] > L[i][j - 1])
+            i--;
+        else
+            j--;
+    }
+
+    // Print the lcs
+    printf("Longest Common Subsequence: %s\n", lcs);
+}
+
+int main() {
+    char X[] = "AGGTAB";
+    char Y[] = "GXTXAYB";
+
+    int m = strlen(X);
+    int n = strlen(Y);
+
+    printf("Length of LCS is %d\n", lcsLength(X, Y, m, n));
+    printLCS(X, Y, m, n);
+
+    return 0;
+}
+
